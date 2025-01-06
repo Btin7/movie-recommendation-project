@@ -9,7 +9,7 @@ This project implements a **Movie Recommendation System** using **Python** and *
 
 ## Dataset
 The project uses the [MovieLens Dataset](https://grouplens.org/datasets/movielens/) provided by GroupLens Research. 
-- You can download the **ml-latest-small** dataset for a smaller version.
+- You can download the **ml-latest-small** dataset for a smaller version.(with less movies to choose from)
 
 ## Requirements
 Make sure you have the following installed:
