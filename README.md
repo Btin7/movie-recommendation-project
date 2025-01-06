@@ -22,7 +22,10 @@ Install the required libraries using pip:
 ```bash
 pip install pandas scikit-learn
 ```
-
+or
+```bash
+pip install -r /path/to/requirements.txt
+```
 ## How It Works
 1. **Data Preprocessing**: 
    - Combine relevant features (e.g., title, genres) into a single column.
