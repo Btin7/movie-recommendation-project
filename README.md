@@ -57,7 +57,12 @@ cd movie-recommendation-system
 
 ### Example Code
 ```python
-print(recommend("The Godfather", 5))
+'Enter a movie title to get recommendations: Toy Story (1995)'
+'Enter the number of recommendations you want: 3'
+'Recommended movies:
+- Toy Story 2 (1999) (Rating: 3.9, Genres: Adventure|Animation|Children|Comedy|Fantasy)
+- Toy Story 3 (2010) (Rating: 4.1, Genres: Adventure|Animation|Children|Comedy|Fantasy|IMAX)
+- Antz (1998) (Rating: 3.2, Genres: Adventure|Animation|Children|Comedy|Fantasy)'
 ```
 This will return the top 5 movies similar to *The Godfather*.
 
