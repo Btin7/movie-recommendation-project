@@ -55,7 +55,7 @@ cd movie-recommendation-system
    python movie_recommendation.py
    ```
 
-### Example Code
+### Usage example
 ```python
 'Enter a movie title to get recommendations: Toy Story (1995)'
 'Enter the number of recommendations you want: 3'
