@@ -9,9 +9,10 @@ st.write('Welcome!')
 
 def load_data():
     movies = pd.read_csv("movies.csv")
-    return movies
+    ratings = pd.read_csv("ratings.csv")
+    return movies, ratings
 
-movies = load_data()
+movies, ratings = load_data()
 
 movies["combined_features"] = movies["title"] + " " + movies["genres"]
 
@@ -31,7 +32,8 @@ def recommend_content(movie_title, genre_filter=None, num_recommendations=5):
             genres = movies.loc[i[0], "genres"]
             if genre_filter and genre_filter.lower() not in genres.lower():
                 continue
-            recommendations.append((title, genres))
+            avg_rating = ratings[ratings['movieId'] == movies.loc[i[0], 'movieId']]['rating'].mean()
+            recommendations.append((title, genres, avg_rating))
             if len(recommendations) >= num_recommendations:
                 break
         return recommendations
@@ -54,8 +56,8 @@ if recommendation_type == "Content-Based":
             if isinstance(rec, str):
                 st.write(rec)
             else:
-                movie, genres = rec
-                st.write(f"- {movie} (Genres: {genres})")
+                movie, genres, avg_rating = rec
+                st.write(f"- {movie} (Genres: {genres}, Rating: {avg_rating:.2f})")
 
 elif recommendation_type == "Genre-Based":
     st.header("Genre-Based Recommendations")
@@ -64,10 +66,11 @@ elif recommendation_type == "Genre-Based":
 
     if st.button("Recommend"):
         filtered_movies = movies[movies['genres'].str.contains(genre, case=False, na=False)]
-        recommendations = filtered_movies.sample(num_recommendations) if not filtered_movies.empty else []
-        st.write("Recommendations:")
-        if not recommendations.empty:
+        if len(filtered_movies) > 0:
+            recommendations = filtered_movies.sample(num_recommendations) if num_recommendations <= len(filtered_movies) else filtered_movies
+            st.write("Recommendations:")
             for index, row in recommendations.iterrows():
-                st.write(f"- {row['title']} (Genres: {row['genres']})")
+                avg_rating = ratings[ratings['movieId'] == row['movieId']]['rating'].mean()
+                st.write(f"- {row['title']} (Genres: {row['genres']}, Rating: {avg_rating:.2f})")
         else:
             st.write("No movies found for the selected genre.")
