@@ -5,7 +5,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 st.title('🎥 Movie Recommendation')
 
-st.write('Welcome!')
+st.write('Welcome! note: You have to press ENTER after writing out the genre/movie title otherwise it will give an error!')
 
 def load_data():
     movies = pd.read_csv("movies.csv")
