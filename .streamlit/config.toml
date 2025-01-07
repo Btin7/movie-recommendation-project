@@ -1,6 +1,6 @@
 [theme]
-primaryColor="#F63366"
-backgroundColor="#FFFFFF"
-secondaryBackgroundColor="#F0F2F6"
-textColor="#262730"
-font="impact"
+primaryColor="#000000"
+backgroundColor="#FFEB3B"
+secondaryBackgroundColor="#F5F5F5"
+textColor="#212121"
+font="Impact"
