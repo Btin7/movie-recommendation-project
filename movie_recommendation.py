@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from surprise import SVD, Reader, Dataset
-from surprise.model_selection import train_test_split
+from sklearn.decomposition import TruncatedSVD
 
+st.title('🎥 movie recommendation')
+
+st.write('welcome lol')
 def load_data():
     movies = pd.read_csv("movies.csv")
     ratings = pd.read_csv("ratings.csv")
@@ -18,12 +20,13 @@ cv = CountVectorizer()
 vectorized_matrix = cv.fit_transform(movies["combined_features"])
 similarity_scores = cosine_similarity(vectorized_matrix)
 
-reader = Reader(rating_scale=(0.5, 5))
-data = Dataset.load_from_df(ratings[["userId", "movieId", "rating"]], reader)
-trainset, _ = train_test_split(data, test_size=0.2)
+ratings_matrix = ratings.pivot(index='userId', columns='movieId', values='rating').fillna(0)
+model = TruncatedSVD(n_components=50)
+latent_matrix = model.fit_transform(ratings_matrix)
 
-model = SVD()
-model.fit(trainset)
+latent_matrix_df = pd.DataFrame(latent_matrix, index=ratings_matrix.index)
+
+similarity_matrix = cosine_similarity(latent_matrix_df)
 
 def recommend_content(movie_title, num_recommendations=5):
     try:
@@ -40,17 +43,24 @@ def recommend_content(movie_title, num_recommendations=5):
         return ["Movie not found in the dataset. Please check the title and try again."]
 
 def recommend_collaborative(user_id, num_recommendations=5):
-    movie_ids = movies['movieId'].unique()
-    predictions = []
-    for movie_id in movie_ids:
-        pred = model.predict(user_id, movie_id)
-        predictions.append((movie_id, pred.est))
+    if user_id not in latent_matrix_df.index:
+        return ["User not found in the dataset. Please check the user ID and try again."]
 
-    predictions.sort(key=lambda x: x[1], reverse=True)
-    top_recommendations = predictions[:num_recommendations]
+    user_similarity_scores = similarity_matrix[user_id - 1]
+    similar_users = list(enumerate(user_similarity_scores))
+    similar_users = sorted(similar_users, key=lambda x: x[1], reverse=True)
+
+    recommended_movies = {}
+    for similar_user, _ in similar_users[:10]:
+        user_ratings = ratings_matrix.iloc[similar_user]
+        for movie_id in user_ratings[user_ratings > 4].index:
+            if movie_id not in recommended_movies:
+                recommended_movies[movie_id] = user_ratings[movie_id]
+
+    recommended_movies = sorted(recommended_movies.items(), key=lambda x: x[1], reverse=True)
 
     recommendations = []
-    for movie_id, _ in top_recommendations:
+    for movie_id, _ in recommended_movies[:num_recommendations]:
         movie = movies[movies['movieId'] == movie_id]
         recommendations.append((movie['title'].values[0], movie['genres'].values[0]))
 
